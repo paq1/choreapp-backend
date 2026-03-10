@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TodoModule } from './todo/todo.module';
+import { ColumnsModule } from './columns/columns.module';
 import databaseConfig from './config/database.config';
 
 @Module({
@@ -19,6 +20,7 @@ import databaseConfig from './config/database.config';
       }),
     }),
     TodoModule,
+    ColumnsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
