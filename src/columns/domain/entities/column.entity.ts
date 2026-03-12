@@ -1,7 +1,7 @@
 import { err, ok, Result } from 'neverthrow';
 import { TodoError } from '../errors/column.errors';
 
-export class Column {
+export class ColumnEntity {
   private constructor(
     public readonly id: string | null,
     private _title: string,
@@ -9,11 +9,13 @@ export class Column {
     private _description?: string,
   ) {}
 
-  create(props: ColumnProps): Result<Column, TodoError> {
-    if (!Column.isvalid(props)) {
+  create(props: ColumnProps): Result<ColumnEntity, TodoError> {
+    if (!ColumnEntity.isvalid(props)) {
       return err({ type: 'VALIDATION_ERROR', message: 'Invalid column props' });
     }
-    return ok(new Column(null, props.title, props.position, props.description));
+    return ok(
+      new ColumnEntity(null, props.title, props.position, props.description),
+    );
   }
 
   static isvalid(props: ColumnProps): boolean {

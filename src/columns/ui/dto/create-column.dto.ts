@@ -1,9 +1,14 @@
-import { Column } from '../../domain/entities/column.entity';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateColumnDto {
-  constructor(
-    private _title: string,
-    private _position: number,
-    private _description?: string,
-  ) {}
+  @ApiProperty({ example: 'Todo' })
+  @IsString()
+  @IsNotEmpty()
+  title: string;
+
+  @ApiProperty({ example: 'whatever' })
+  @IsOptional()
+  @IsString()
+  description?: string;
 }
