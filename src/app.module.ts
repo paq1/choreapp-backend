@@ -3,8 +3,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TodoModule } from './todo/todo.module';
 import { ColumnsModule } from './columns/columns.module';
+import { TicketsModule } from './tickets/tickets.module';
 import databaseConfig from './config/database.config';
 
 @Module({
@@ -19,8 +19,8 @@ import databaseConfig from './config/database.config';
         uri: configService.get<string>('MONGO_URI'),
       }),
     }),
-    TodoModule,
     ColumnsModule,
+    TicketsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
