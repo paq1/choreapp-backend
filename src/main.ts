@@ -14,8 +14,8 @@ async function bootstrap() {
   );
 
   const config = new DocumentBuilder()
-    .setTitle('Mon API')
-    .setDescription('Documentation de l’API REST')
+    .setTitle('Choreapp API')
+    .setDescription("Backend de l'application choreapp")
     .setVersion('1.0')
     // .addBearerAuth()
     .build();
