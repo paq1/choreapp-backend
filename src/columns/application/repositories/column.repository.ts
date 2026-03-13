@@ -1,3 +1,5 @@
 import { Repository } from '../../../common/repositories/repository';
 
-export interface ColumnRepository<DATA, ID> extends Repository<DATA, ID> {}
+export type ColumnRepository<DATA, ID> = Repository<DATA, ID>;
+
+export const COLUMN_REPOSITORY = Symbol('COLUMN_REPOSITORY');

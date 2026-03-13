@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ColumnsService } from './services/columns.service';
 import { ColumnsController } from './ui/columns.controller';
+import { COLUMN_REPOSITORY } from './application/repositories/column.repository';
 import {
   CREATE_COLUMN_USE_CASE,
   CreateColumnUseCaseHandler,
@@ -26,6 +27,10 @@ import { MongoColumnRepository } from './infra/repositories/mongo.column.reposit
   providers: [
     ColumnsService,
     MongoColumnRepository,
+    {
+      provide: COLUMN_REPOSITORY,
+      useExisting: MongoColumnRepository,
+    },
     {
       provide: CREATE_COLUMN_USE_CASE,
       useClass: CreateColumnUseCaseHandler,
