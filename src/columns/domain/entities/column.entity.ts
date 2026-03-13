@@ -3,10 +3,10 @@ import { TodoError } from '../errors/column.errors';
 
 export class ColumnEntity {
   private constructor(
-    public readonly id: string | null,
-    private _title: string,
-    private _position: number,
-    private _description?: string,
+    public readonly _id: string,
+    public readonly _title: string,
+    public readonly _position: number,
+    public readonly _description?: string,
   ) {}
 
   create(props: ColumnProps): Result<ColumnEntity, TodoError> {
@@ -14,7 +14,12 @@ export class ColumnEntity {
       return err({ type: 'VALIDATION_ERROR', message: 'Invalid column props' });
     }
     return ok(
-      new ColumnEntity(null, props.title, props.position, props.description),
+      new ColumnEntity(
+        props.id,
+        props.title,
+        props.position,
+        props.description,
+      ),
     );
   }
 
@@ -24,6 +29,7 @@ export class ColumnEntity {
 }
 
 interface ColumnProps {
+  id: string;
   title: string;
   position: number;
   description?: string;
