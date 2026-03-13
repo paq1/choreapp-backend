@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 import { ColumnsService } from './services/columns.service';
 import { ColumnsController } from './ui/columns.controller';
 import {
@@ -9,11 +10,22 @@ import {
   ERROR_HANDLER_SERVICE,
   ErrorsHandlerExceptionNest,
 } from '../common/errors/errors.handler';
+import { COLUMN_MODEL_NAME, ColumnMongoSchema } from './infra/dbo/column.dbo';
+import { MongoColumnRepository } from './infra/repositories/mongo.column.repository';
 
 @Module({
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: COLUMN_MODEL_NAME,
+        schema: ColumnMongoSchema,
+      },
+    ]),
+  ],
   controllers: [ColumnsController],
   providers: [
     ColumnsService,
+    MongoColumnRepository,
     {
       provide: CREATE_COLUMN_USE_CASE,
       useClass: CreateColumnUseCaseHandler,
