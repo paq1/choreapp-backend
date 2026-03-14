@@ -1,6 +1,6 @@
 import { ColumnEntity } from '../../../domain/entities/column.entity';
 import { Inject, Injectable } from '@nestjs/common';
-import { err, ResultAsync } from 'neverthrow';
+import { errAsync, ResultAsync } from 'neverthrow';
 import { Errors, ErrorType } from '../../../../common/errors/errors';
 import type { ColumnRepository } from '../../repositories/column.repository';
 import { COLUMN_REPOSITORY } from '../../repositories/column.repository';
@@ -34,9 +34,10 @@ export class CreateColumnUseCaseHandler implements CreateColumnUseCase {
       this.columnRepository.columnAlreadyExists(title),
     ).andThen((exists) => {
       if (exists) {
-        return err<ColumnEntity, Errors>({
+        return errAsync<ColumnEntity, Errors>({
           type: ErrorType.FAILURE,
-          code: 400,
+          status: 400,
+          errorCode: '01CAERR',
           message: 'Column already exists',
         });
       }

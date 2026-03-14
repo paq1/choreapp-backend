@@ -1,6 +1,7 @@
 import { Result } from 'neverthrow';
 import { Errors, ErrorType } from './errors';
 import {
+  BadRequestException,
   InternalServerErrorException,
   NotFoundException,
   NotImplementedException,
@@ -22,7 +23,13 @@ export class ErrorsHandlerExceptionNest implements ErrorsHandlerService {
 
     switch (err.type) {
       case ErrorType.FAILURE:
-        switch (err.code) {
+        switch (err.status) {
+          case 400:
+            throw new BadRequestException({
+              status: err.status,
+              errorCode: err.errorCode,
+              message: err.message,
+            });
           case 404:
             throw new NotFoundException('Board not found');
           case 500:

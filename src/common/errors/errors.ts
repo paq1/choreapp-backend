@@ -7,7 +7,8 @@ export enum ErrorType {
 
 export type Failure = {
   type: ErrorType.FAILURE;
-  code: number;
+  errorCode?: string;
+  status: number;
   message: string;
 };
 

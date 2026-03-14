@@ -13,7 +13,7 @@ export class ColumnEntity {
     if (!ColumnEntity.isvalid(props)) {
       return err({
         type: ErrorType.FAILURE,
-        code: 400,
+        status: 400,
         message: 'Invalid column props',
       });
     }
