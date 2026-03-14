@@ -1,7 +1,7 @@
 import { ColumnEntity } from '../../../domain/entities/column.entity';
 import { Inject, Injectable } from '@nestjs/common';
-import { Result, ResultAsync } from 'neverthrow';
-import { Errors } from '../../../../common/errors/errors';
+import { err, Result, ResultAsync } from 'neverthrow';
+import { Errors, ErrorType } from '../../../../common/errors/errors';
 import type { ColumnRepository } from '../../repositories/column.repository';
 import { COLUMN_REPOSITORY } from '../../repositories/column.repository';
 import { randomUUID } from 'node:crypto';
@@ -23,12 +23,28 @@ export class CreateColumnUseCaseHandler implements CreateColumnUseCase {
     private readonly columnRepository: ColumnRepository<ColumnEntity, string>,
   ) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  create(_column: CreateColumnIn): ResultAsync<ColumnEntity, Errors> {
-    void this.columnRepository;
+  create(column: CreateColumnIn): ResultAsync<ColumnEntity, Errors> {
+    const title = column.title;
+    return ResultAsync.fromSafePromise(
+      this.columnRepository.columnAlreadyExists(title),
+    ).andThen((exists) => {
+      if (exists) {
+        return err<ColumnEntity, Errors>({
+          type: ErrorType.FAILURE,
+          code: 400,
+          message: 'Column already exists',
+        });
+      }
+      return this.createColumn(column);
+    });
+  }
 
-    const title = _column.title;
-    const description = _column.description;
+  private createColumn(
+    column: CreateColumnIn,
+  ): ResultAsync<ColumnEntity, Errors> {
+    const title = column.title;
+    const description = column.description;
+
     const id = randomUUID().valueOf();
     const entityR = ColumnEntity.create({
       id,

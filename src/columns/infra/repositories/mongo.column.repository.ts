@@ -15,6 +15,10 @@ export class MongoColumnRepository implements ColumnRepository<
     private readonly model: Model<ColumnDocumentMongoDBO>,
   ) {}
 
+  columnAlreadyExists(name: string): Promise<boolean> {
+    return this.model.exists({ 'data.title': name }).then((exists) => !!exists);
+  }
+
   private toEntity(dbo: ColumnDocumentMongoDBO): ColumnEntity {
     return {
       _id: dbo.id,
