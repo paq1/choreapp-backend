@@ -9,7 +9,7 @@ export class ColumnEntity {
     public readonly _description?: string,
   ) {}
 
-  static create(props: ColumnProps): Result<ColumnEntity, Errors> {
+  static safeCreate(props: ColumnProps): Result<ColumnEntity, Errors> {
     if (!ColumnEntity.isvalid(props)) {
       return err({
         type: ErrorType.FAILURE,

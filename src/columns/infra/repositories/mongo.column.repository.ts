@@ -6,14 +6,19 @@ import { ColumnEntity } from '../../domain/entities/column.entity';
 import { COLUMN_MODEL_NAME, ColumnDocumentMongoDBO } from '../dbo/column.dbo';
 
 @Injectable()
-export class MongoColumnRepository implements ColumnRepository<
-  ColumnEntity,
-  string
-> {
+export class MongoColumnRepository implements ColumnRepository {
   constructor(
     @InjectModel(COLUMN_MODEL_NAME)
     private readonly model: Model<ColumnDocumentMongoDBO>,
   ) {}
+
+  fetchHighestPosition(): Promise<number> {
+    return this.model
+      .findOne({})
+      .sort({ 'data.position': -1 })
+      .lean()
+      .then((doc) => (doc ? this.toEntity(doc)._position : 0));
+  }
 
   columnAlreadyExists(name: string): Promise<boolean> {
     return this.model.exists({ 'data.title': name }).then((exists) => !!exists);

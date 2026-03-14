@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateColumnDto } from '../ui/dto/create-column.dto';
 import { UpdateColumnDto } from '../ui/dto/update-column.dto';
 
+// TODO retirer ce service
 @Injectable()
 export class ColumnsService {
   create(createColumnDto: CreateColumnDto) {

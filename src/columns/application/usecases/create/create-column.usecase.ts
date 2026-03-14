@@ -1,10 +1,13 @@
 import { ColumnEntity } from '../../../domain/entities/column.entity';
 import { Inject, Injectable } from '@nestjs/common';
-import { err, Result, ResultAsync } from 'neverthrow';
+import { err, ResultAsync } from 'neverthrow';
 import { Errors, ErrorType } from '../../../../common/errors/errors';
 import type { ColumnRepository } from '../../repositories/column.repository';
 import { COLUMN_REPOSITORY } from '../../repositories/column.repository';
 import { randomUUID } from 'node:crypto';
+import type { CanComputeNextColumnPosition } from '../../services/position-computer.service';
+import { POSITION_COMPUTER_SERVICE } from '../../services/position-computer.service';
+import { toAsync } from '../../../../common/netherthrow/helper';
 
 export interface CreateColumnIn {
   title: string;
@@ -20,7 +23,9 @@ export interface CreateColumnUseCase {
 export class CreateColumnUseCaseHandler implements CreateColumnUseCase {
   constructor(
     @Inject(COLUMN_REPOSITORY)
-    private readonly columnRepository: ColumnRepository<ColumnEntity, string>,
+    private readonly columnRepository: ColumnRepository,
+    @Inject(POSITION_COMPUTER_SERVICE)
+    private readonly nextPositionComputer: CanComputeNextColumnPosition,
   ) {}
 
   create(column: CreateColumnIn): ResultAsync<ColumnEntity, Errors> {
@@ -44,20 +49,25 @@ export class CreateColumnUseCaseHandler implements CreateColumnUseCase {
   ): ResultAsync<ColumnEntity, Errors> {
     const title = column.title;
     const description = column.description;
-
     const id = randomUUID().valueOf();
-    const entityR = ColumnEntity.create({
-      id,
-      title,
-      position: 1, // todo calculer la position
-      description,
-    });
-    const res: Result<Promise<ColumnEntity>, Errors> = entityR.map(
-      async (entity) => {
-        await this.columnRepository.createOne(entity, id);
-        return entity;
-      },
-    );
-    return res.asyncMap((x) => x);
+
+    return this.nextPositionComputer
+      .computeNextPosition()
+      .andThen((position) => {
+        const entityR = ColumnEntity.safeCreate({
+          id,
+          title,
+          position,
+          description,
+        });
+        return toAsync(entityR);
+      })
+      .andThen((entity) => {
+        const resEntity = this.columnRepository
+          .createOne(entity, id)
+          .then(() => entity);
+
+        return ResultAsync.fromSafePromise<ColumnEntity, Errors>(resEntity);
+      });
   }
 }

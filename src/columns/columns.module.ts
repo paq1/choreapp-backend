@@ -13,6 +13,10 @@ import {
 } from '../common/errors/errors.handler';
 import { COLUMN_MODEL_NAME, ColumnMongoSchema } from './infra/dbo/column.dbo';
 import { MongoColumnRepository } from './infra/repositories/mongo.column.repository';
+import {
+  NextColumnPositionService,
+  POSITION_COMPUTER_SERVICE,
+} from './application/services/position-computer.service';
 
 @Module({
   imports: [
@@ -38,6 +42,10 @@ import { MongoColumnRepository } from './infra/repositories/mongo.column.reposit
     {
       provide: ERROR_HANDLER_SERVICE,
       useClass: ErrorsHandlerExceptionNest,
+    },
+    {
+      provide: POSITION_COMPUTER_SERVICE,
+      useClass: NextColumnPositionService,
     },
   ],
 })
