@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Inject,
-  Param,
-  Patch,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post, } from '@nestjs/common';
 import { ColumnsService } from '../services/columns.service';
 import { CreateColumnDto } from './dto/create-column.dto';
 import { UpdateColumnDto } from './dto/update-column.dto';
@@ -16,6 +7,8 @@ import type { CreateColumnUseCase } from '../application/usecases/create/create-
 import { CREATE_COLUMN_USE_CASE } from '../application/usecases/create/create-column.usecase';
 import type { ErrorsHandlerService } from '../../common/errors/errors.handler';
 import { ERROR_HANDLER_SERVICE } from '../../common/errors/errors.handler';
+import type { DeleteOneColumnUseCase } from '../application/usecases/delete_one/delete-one-column.usecase';
+import { DELETE_ONE_COLUMN_USECASE } from '../application/usecases/delete_one/delete-one-column.usecase';
 
 @Controller('columns')
 export class ColumnsController {
@@ -23,6 +16,8 @@ export class ColumnsController {
     private readonly columnsService: ColumnsService,
     @Inject(CREATE_COLUMN_USE_CASE)
     private readonly createColumn: CreateColumnUseCase,
+    @Inject(DELETE_ONE_COLUMN_USECASE)
+    private readonly deleteColumn: DeleteOneColumnUseCase,
     @Inject(ERROR_HANDLER_SERVICE)
     private readonly errorHandler: ErrorsHandlerService,
   ) {}
@@ -54,7 +49,10 @@ export class ColumnsController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Supprimer une colonne' })
+  @ApiResponse({ status: 204, description: 'Colonne supprimé' })
+  @ApiResponse({ status: 404, description: 'Not found' })
   remove(@Param('id') id: string) {
-    return this.columnsService.remove(+id);
+    return this.deleteColumn.deleteOne(id);
   }
 }

@@ -1,14 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateColumnDto } from '../ui/dto/create-column.dto';
 import { UpdateColumnDto } from '../ui/dto/update-column.dto';
 
 // TODO retirer ce service
 @Injectable()
 export class ColumnsService {
-  create(createColumnDto: CreateColumnDto) {
-    return 'This action adds a new column';
-  }
-
   findAll() {
     return `This action returns all columns`;
   }
@@ -19,9 +14,5 @@ export class ColumnsService {
 
   update(id: number, updateColumnDto: UpdateColumnDto) {
     return `This action updates a #${id} column`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} column`;
   }
 }

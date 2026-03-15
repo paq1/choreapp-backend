@@ -17,6 +17,11 @@ import {
   NextColumnPositionService,
   POSITION_COMPUTER_SERVICE,
 } from './application/services/position-computer.service';
+import {
+  DELETE_ONE_COLUMN_USECASE,
+  DeleteOneColumnUseCase,
+  DeleteOneColumnUseCaseHandler,
+} from './application/usecases/delete_one/delete-one-column.usecase';
 
 @Module({
   imports: [
@@ -32,12 +37,12 @@ import {
     ColumnsService,
     MongoColumnRepository,
     {
-      provide: COLUMN_REPOSITORY,
-      useExisting: MongoColumnRepository,
-    },
-    {
       provide: CREATE_COLUMN_USE_CASE,
       useClass: CreateColumnUseCaseHandler,
+    },
+    {
+      provide: DELETE_ONE_COLUMN_USECASE,
+      useClass: DeleteOneColumnUseCaseHandler,
     },
     {
       provide: ERROR_HANDLER_SERVICE,
@@ -46,6 +51,10 @@ import {
     {
       provide: POSITION_COMPUTER_SERVICE,
       useClass: NextColumnPositionService,
+    },
+    {
+      provide: COLUMN_REPOSITORY,
+      useClass: MongoColumnRepository,
     },
   ],
 })

@@ -4,6 +4,9 @@ import { Model } from 'mongoose';
 import { ColumnRepository } from '../../application/repositories/column.repository';
 import { ColumnEntity } from '../../domain/entities/column.entity';
 import { COLUMN_MODEL_NAME, ColumnDocumentMongoDBO } from '../dbo/column.dbo';
+import { err, ok, ResultAsync } from 'neverthrow';
+import { Errors, ErrorType } from '../../../common/errors/errors';
+import { fromPromiseToAsync, toAsync } from '../../../common/netherthrow/helper';
 
 @Injectable()
 export class MongoColumnRepository implements ColumnRepository {
@@ -49,10 +52,19 @@ export class MongoColumnRepository implements ColumnRepository {
     return this.model.create(this.toDbo(data, id)).then(() => undefined);
   }
 
-  deleteOne(id: string): Promise<void> {
-    return this.model.deleteOne({ id }).then(() => {
-      return;
+  deleteOne(id: string): ResultAsync<void, Errors> {
+    const deleted = this.model.deleteOne({ id: id }).then((deleteResult) => {
+      if (deleteResult.deletedCount === 0) {
+        return err<void, Errors>({
+          type: ErrorType.FAILURE,
+          status: 404,
+          errorCode: '01CAERR',
+          message: 'Column not found',
+        });
+      }
+      return ok(undefined);
     });
+    return fromPromiseToAsync(deleted);
   }
 
   fetchAll(): Promise<ColumnEntity[]> {
