@@ -61,7 +61,8 @@ export class ColumnsController {
   @ApiOperation({ summary: 'Supprimer une colonne' })
   @ApiResponse({ status: 204, description: 'Colonne supprimé' })
   @ApiResponse({ status: 404, description: 'Not found' })
-  remove(@Param('id') id: string) {
-    return this.deleteColumn.deleteOne(id);
+  async remove(@Param('id') id: string) {
+    const res = await this.deleteColumn.deleteOne(id);
+    return this.errorHandler.unwrapAndHandleErrors(res);
   }
 }

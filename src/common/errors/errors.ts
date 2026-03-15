@@ -14,5 +14,6 @@ export type Failure = {
 
 export type Panic = {
   type: ErrorType.PANIC;
+  errorCode?: string;
   cause: unknown;
 };
