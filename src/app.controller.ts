@@ -7,8 +7,6 @@ export class AppController {
 
   @Get('/hello/:id')
   getHello(@Param('id') id: string, @Query('test') test: string): string {
-    console.log(id);
-    console.log(test);
     return this.appService.getHello();
   }
 }

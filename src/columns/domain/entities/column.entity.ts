@@ -3,10 +3,9 @@ import { Errors, ErrorType } from '../../../common/errors/errors';
 
 export class ColumnEntity {
   private constructor(
-    public readonly _id: string,
-    public readonly _title: string,
-    public readonly _position: number,
-    public readonly _description?: string,
+    public readonly title: string,
+    public readonly position: number,
+    public readonly description?: string,
   ) {}
 
   static safeCreate(props: ColumnProps): Result<ColumnEntity, Errors> {
@@ -17,14 +16,7 @@ export class ColumnEntity {
         message: 'Invalid column props',
       });
     }
-    return ok(
-      new ColumnEntity(
-        props.id,
-        props.title,
-        props.position,
-        props.description,
-      ),
-    );
+    return ok(new ColumnEntity(props.title, props.position, props.description));
   }
 
   static isvalid(props: ColumnProps): boolean {

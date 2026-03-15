@@ -8,6 +8,7 @@ export interface ColumnDocumentMongoDBO {
 }
 
 export interface ColumnDbo {
+  type: string;
   title: string;
   position: number;
   description?: string;
@@ -20,6 +21,7 @@ export const ColumnMongoSchema = new Schema<ColumnDocumentMongoDBO>(
   {
     id: { type: String, required: true, unique: true, index: true },
     data: {
+      type: { type: String, required: true },
       title: { type: String, required: true },
       position: { type: Number, required: true },
       description: { type: String, required: false },

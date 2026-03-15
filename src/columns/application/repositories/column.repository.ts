@@ -1,7 +1,11 @@
 import { Repository } from '../../../common/repositories/repository';
 import { ColumnEntity } from '../../domain/entities/column.entity';
+import { IEntity } from '../../../common/entities/entities.model';
 
-export interface ColumnRepository extends Repository<ColumnEntity, string> {
+export interface ColumnRepository extends Repository<
+  IEntity<ColumnEntity>,
+  string
+> {
   columnAlreadyExists(name: string): Promise<boolean>;
   fetchHighestPosition(): Promise<number>;
 }

@@ -5,12 +5,9 @@ import {
   Get,
   Inject,
   Param,
-  Patch,
   Post,
 } from '@nestjs/common';
-import { ColumnsService } from '../services/columns.service';
 import { CreateColumnDto } from './dto/create-column.dto';
-import { UpdateColumnDto } from './dto/update-column.dto';
 import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import type { CreateColumnUseCase } from '../application/usecases/create/create-column.usecase';
 import { CREATE_COLUMN_USE_CASE } from '../application/usecases/create/create-column.usecase';
@@ -18,11 +15,18 @@ import type { ErrorsHandlerService } from '../../common/errors/errors.handler';
 import { ERROR_HANDLER_SERVICE } from '../../common/errors/errors.handler';
 import type { DeleteOneColumnUseCase } from '../application/usecases/delete_one/delete-one-column.usecase';
 import { DELETE_ONE_COLUMN_USECASE } from '../application/usecases/delete_one/delete-one-column.usecase';
+import type { ColumnRepository } from '../application/repositories/column.repository';
+import { COLUMN_REPOSITORY } from '../application/repositories/column.repository';
+import {
+  toJsonApiMany,
+  toJsonApiSingle,
+} from '../../common/jsonapi/jsonapi.model';
 
 @Controller('columns')
 export class ColumnsController {
   constructor(
-    private readonly columnsService: ColumnsService,
+    @Inject(COLUMN_REPOSITORY)
+    private readonly columnRepository: ColumnRepository,
     @Inject(CREATE_COLUMN_USE_CASE)
     private readonly createColumn: CreateColumnUseCase,
     @Inject(DELETE_ONE_COLUMN_USECASE)
@@ -37,24 +41,22 @@ export class ColumnsController {
   @ApiResponse({ status: 201, description: 'Colonne créée' })
   @ApiResponse({ status: 400, description: 'Requête invalide' })
   async create(@Body() createColumnDto: CreateColumnDto) {
-    console.log(createColumnDto);
     const res = await this.createColumn.create(createColumnDto);
     return this.errorHandler.unwrapAndHandleErrors(res);
   }
 
   @Get()
+  @ApiOperation({ summary: 'Recupere toutes les colonnes' })
   findAll() {
-    return this.columnsService.findAll();
+    return this.columnRepository.fetchAll().then((x) => toJsonApiMany(x));
   }
 
   @Get(':id')
+  @ApiOperation({ summary: "Recupere la colonne avec l'id métier" })
   findOne(@Param('id') id: string) {
-    return this.columnsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateColumnDto: UpdateColumnDto) {
-    return this.columnsService.update(+id, updateColumnDto);
+    return this.columnRepository
+      .fetchOne(id)
+      .then((x) => (x ? toJsonApiSingle(x) : {}));
   }
 
   @Delete(':id')

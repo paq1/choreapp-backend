@@ -6,7 +6,8 @@ import { ColumnEntity } from '../../domain/entities/column.entity';
 import { COLUMN_MODEL_NAME, ColumnDocumentMongoDBO } from '../dbo/column.dbo';
 import { err, ok, ResultAsync } from 'neverthrow';
 import { Errors, ErrorType } from '../../../common/errors/errors';
-import { fromPromiseToAsync, toAsync } from '../../../common/netherthrow/helper';
+import { fromPromiseToAsync } from '../../../common/netherthrow/helper';
+import { IEntity } from '../../../common/entities/entities.model';
 
 @Injectable()
 export class MongoColumnRepository implements ColumnRepository {
@@ -20,36 +21,46 @@ export class MongoColumnRepository implements ColumnRepository {
       .findOne({})
       .sort({ 'data.position': -1 })
       .lean()
-      .then((doc) => (doc ? this.toEntity(doc)._position : 0));
+      .then((doc) => (doc ? this.toEntity(doc).data.position : 0));
   }
 
   columnAlreadyExists(name: string): Promise<boolean> {
     return this.model.exists({ 'data.title': name }).then((exists) => !!exists);
   }
 
-  private toEntity(dbo: ColumnDocumentMongoDBO): ColumnEntity {
+  private toEntity(dbo: ColumnDocumentMongoDBO): IEntity<ColumnEntity> {
     return {
-      _id: dbo.id,
-      _title: dbo.data.title,
-      _position: dbo.data.position,
-      _description: dbo.data.description,
-    } as ColumnEntity;
+      id: dbo.id,
+      type: dbo.data.type,
+      data: {
+        title: dbo.data.title,
+        position: dbo.data.position,
+        description: dbo.data.description,
+      },
+      version: dbo.version,
+    };
   }
 
-  private toDbo(data: ColumnEntity, id: string): ColumnDocumentMongoDBO {
+  private toDbo(
+    data: IEntity<ColumnEntity>,
+    id: string,
+  ): ColumnDocumentMongoDBO {
     return {
       id,
       data: {
-        title: data._title,
-        position: data._position,
-        description: data._description,
+        type: data.type,
+        title: data.data.title,
+        position: data.data.position,
+        description: data.data.description,
       },
       version: 1,
     };
   }
 
-  createOne(data: ColumnEntity, id: string): Promise<void> {
-    return this.model.create(this.toDbo(data, id)).then(() => undefined);
+  createOne(data: IEntity<ColumnEntity>, id: string): Promise<void> {
+    const dbo = this.toDbo(data, id);
+
+    return this.model.create(dbo).then(() => undefined);
   }
 
   deleteOne(id: string): ResultAsync<void, Errors> {
@@ -67,16 +78,17 @@ export class MongoColumnRepository implements ColumnRepository {
     return fromPromiseToAsync(deleted);
   }
 
-  fetchAll(): Promise<ColumnEntity[]> {
+  fetchAll(): Promise<IEntity<ColumnEntity>[]> {
     return this.model
       .find()
+      .limit(100) // TODO : gerer la pagination
       .lean()
       .then((docs) => docs.map((doc) => this.toEntity(doc)));
   }
 
-  fetchOne(id: string): Promise<ColumnEntity | undefined> {
+  fetchOne(id: string): Promise<IEntity<ColumnEntity> | undefined> {
     return this.model
-      .findOne({ id })
+      .findOne({ id: id })
       .lean()
       .then((doc) => {
         if (!doc) {
@@ -86,16 +98,16 @@ export class MongoColumnRepository implements ColumnRepository {
       });
   }
 
-  updateOne(id: string, data: ColumnEntity): Promise<void> {
+  updateOne(id: string, data: IEntity<ColumnEntity>): Promise<void> {
     return this.model
       .updateOne(
         { id },
         {
           $set: {
             data: {
-              title: data._title,
-              position: data._position,
-              description: data._description,
+              title: data.data.title,
+              position: data.data.position,
+              description: data.data.description,
             },
           },
           $inc: { version: 1 },

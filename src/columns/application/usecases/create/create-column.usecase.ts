@@ -63,10 +63,16 @@ export class CreateColumnUseCaseHandler implements CreateColumnUseCase {
         });
         return toAsync(entityR);
       })
-      .andThen((entity) => {
+      .andThen((column) => {
+        const entity = {
+          type: 'column',
+          data: column,
+          id: id,
+          version: 1,
+        };
         const resEntity = this.columnRepository
           .createOne(entity, id)
-          .then(() => entity);
+          .then(() => column);
 
         return ResultAsync.fromSafePromise<ColumnEntity, Errors>(resEntity);
       });

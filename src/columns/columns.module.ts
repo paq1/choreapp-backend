@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ColumnsService } from './services/columns.service';
 import { ColumnsController } from './ui/columns.controller';
 import { COLUMN_REPOSITORY } from './application/repositories/column.repository';
 import {
@@ -19,7 +18,6 @@ import {
 } from './application/services/position-computer.service';
 import {
   DELETE_ONE_COLUMN_USECASE,
-  DeleteOneColumnUseCase,
   DeleteOneColumnUseCaseHandler,
 } from './application/usecases/delete_one/delete-one-column.usecase';
 
@@ -34,7 +32,6 @@ import {
   ],
   controllers: [ColumnsController],
   providers: [
-    ColumnsService,
     MongoColumnRepository,
     {
       provide: CREATE_COLUMN_USE_CASE,
