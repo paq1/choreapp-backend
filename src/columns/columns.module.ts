@@ -6,10 +6,6 @@ import {
   CREATE_COLUMN_USE_CASE,
   CreateColumnUseCaseHandler,
 } from './application/usecases/create/create-column.usecase';
-import {
-  ERROR_HANDLER_SERVICE,
-  ErrorsHandlerExceptionNest,
-} from '../common/errors/errors.handler';
 import { COLUMN_MODEL_NAME, ColumnMongoSchema } from './infra/dbo/column.dbo';
 import { MongoColumnRepository } from './infra/repositories/mongo.column.repository';
 import {
@@ -20,9 +16,11 @@ import {
   DELETE_ONE_COLUMN_USECASE,
   DeleteOneColumnUseCaseHandler,
 } from './application/usecases/delete_one/delete-one-column.usecase';
+import { CommonModule } from '../common/common.module';
 
 @Module({
   imports: [
+    CommonModule,
     MongooseModule.forFeature([
       {
         name: COLUMN_MODEL_NAME,
@@ -39,10 +37,6 @@ import {
     {
       provide: DELETE_ONE_COLUMN_USECASE,
       useClass: DeleteOneColumnUseCaseHandler,
-    },
-    {
-      provide: ERROR_HANDLER_SERVICE,
-      useClass: ErrorsHandlerExceptionNest,
     },
     {
       provide: POSITION_COMPUTER_SERVICE,
