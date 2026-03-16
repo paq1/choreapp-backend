@@ -25,7 +25,6 @@ export class ColumnEntity {
 }
 
 interface ColumnProps {
-  id: string;
   title: string;
   position: number;
   description?: string;

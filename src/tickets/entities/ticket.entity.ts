@@ -1,1 +1,40 @@
-export class Ticket {}
+import { err, ok, Result } from 'neverthrow';
+import { Errors, ErrorType } from '../../common/errors/errors';
+
+export class TicketEntity {
+  private constructor(
+    public readonly title: string,
+    public readonly order: number,
+    public readonly columnId: string,
+    public readonly description?: string,
+  ) {}
+
+  static safeCreate(props: TicketProps): Result<TicketEntity, Errors> {
+    if (!TicketEntity.isvalid(props)) {
+      return err({
+        type: ErrorType.FAILURE,
+        status: 400,
+        message: 'Invalid column props',
+      });
+    }
+    return ok(
+      new TicketEntity(
+        props.title,
+        props.order,
+        props.columnId,
+        props.description,
+      ),
+    );
+  }
+
+  static isvalid(props: TicketProps): boolean {
+    return props.title.length > 0 && (props.description?.length || 0) > 0;
+  }
+}
+
+interface TicketProps {
+  title: string;
+  order: number;
+  columnId: string;
+  description?: string;
+}

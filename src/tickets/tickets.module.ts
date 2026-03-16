@@ -1,9 +1,37 @@
 import { Module } from '@nestjs/common';
-import { TicketsService } from './tickets.service';
-import { TicketsController } from './tickets.controller';
+import { MongooseModule } from '@nestjs/mongoose';
+import { TicketsService } from './ui/tickets.service';
+import { TicketsController } from './ui/tickets.controller';
+import { MongoTicketRepository } from './infra/repositories/mongo.ticket.repository';
+import { TICKET_REPOSITORY } from './application/repositories/ticket.repository';
+import {
+  CREATE_TICKET_USE_CASE,
+  CreateTicketUseCaseHandler,
+} from './application/usecases/create/create-ticket.usecase';
+import { ColumnsModule } from '../columns/columns.module';
+import { TICKET_MODEL_NAME, TicketMongoSchema } from './infra/dbo/ticket.dbo';
 
 @Module({
+  imports: [
+    ColumnsModule,
+    MongooseModule.forFeature([
+      {
+        name: TICKET_MODEL_NAME,
+        schema: TicketMongoSchema,
+      },
+    ]),
+  ],
   controllers: [TicketsController],
-  providers: [TicketsService],
+  providers: [
+    {
+      provide: CREATE_TICKET_USE_CASE,
+      useClass: CreateTicketUseCaseHandler,
+    },
+    TicketsService,
+    {
+      provide: TICKET_REPOSITORY,
+      useClass: MongoTicketRepository,
+    },
+  ],
 })
 export class TicketsModule {}

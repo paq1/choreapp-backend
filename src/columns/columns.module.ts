@@ -32,7 +32,6 @@ import {
   ],
   controllers: [ColumnsController],
   providers: [
-    MongoColumnRepository,
     {
       provide: CREATE_COLUMN_USE_CASE,
       useClass: CreateColumnUseCaseHandler,
@@ -54,5 +53,6 @@ import {
       useClass: MongoColumnRepository,
     },
   ],
+  exports: [COLUMN_REPOSITORY],
 })
 export class ColumnsModule {}

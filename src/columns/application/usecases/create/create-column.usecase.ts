@@ -56,7 +56,6 @@ export class CreateColumnUseCaseHandler implements CreateColumnUseCase {
       .computeNextPosition()
       .andThen((position) => {
         const entityR = ColumnEntity.safeCreate({
-          id,
           title,
           position,
           description,
