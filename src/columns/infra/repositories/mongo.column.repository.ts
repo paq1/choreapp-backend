@@ -16,6 +16,10 @@ export class MongoColumnRepository implements ColumnRepository {
     private readonly model: Model<ColumnDocumentMongoDBO>,
   ) {}
 
+  columnAlreadyExistsFromId(id: string): Promise<boolean> {
+    return this.model.exists({ id: id }).then((exists) => !!exists);
+  }
+
   fetchHighestPosition(): Promise<number> {
     return this.model
       .findOne({})

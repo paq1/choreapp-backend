@@ -10,6 +10,10 @@ import {
 import { ColumnsModule } from '../columns/columns.module';
 import { TICKET_MODEL_NAME, TicketMongoSchema } from './infra/dbo/ticket.dbo';
 import { CommonModule } from '../common/common.module';
+import {
+  CHANGE_COLUMN_TICKET_USE_CASE,
+  ChangeColumnTicketUseCaseHandler,
+} from './application/usecases/create/change-column-ticket.usecase';
 
 @Module({
   imports: [
@@ -27,6 +31,10 @@ import { CommonModule } from '../common/common.module';
     {
       provide: CREATE_TICKET_USE_CASE,
       useClass: CreateTicketUseCaseHandler,
+    },
+    {
+      provide: CHANGE_COLUMN_TICKET_USE_CASE,
+      useClass: ChangeColumnTicketUseCaseHandler,
     },
     {
       provide: TICKET_REPOSITORY,

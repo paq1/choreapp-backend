@@ -7,6 +7,7 @@ export interface ColumnRepository extends Repository<
   string
 > {
   columnAlreadyExists(name: string): Promise<boolean>;
+  columnAlreadyExistsFromId(id: string): Promise<boolean>;
   fetchHighestPosition(): Promise<number>;
 }
 

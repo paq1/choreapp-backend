@@ -5,6 +5,7 @@ import {
   Get,
   Inject,
   Param,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { CreateTicketDto } from './dto/create-ticket.dto';
@@ -21,6 +22,9 @@ import {
   toJsonApiMany,
   toJsonApiSingle,
 } from '../../common/jsonapi/jsonapi.model';
+import type { ChangeColumnTicketUseCase } from '../application/usecases/create/change-column-ticket.usecase';
+import { CHANGE_COLUMN_TICKET_USE_CASE } from '../application/usecases/create/change-column-ticket.usecase';
+import { ChangeColumnTicketDto } from './dto/change-column-ticket.dto';
 
 @Controller('tickets')
 export class TicketsController {
@@ -29,6 +33,8 @@ export class TicketsController {
     private readonly ticketsRepository: TicketRepository,
     @Inject(CREATE_TICKET_USE_CASE)
     private readonly createTicket: CreateTicketUseCase,
+    @Inject(CHANGE_COLUMN_TICKET_USE_CASE)
+    private readonly changeColumnTicket: ChangeColumnTicketUseCase,
     @Inject(ERROR_HANDLER_SERVICE)
     private readonly errorHandler: ErrorsHandlerService,
   ) {}
@@ -59,10 +65,18 @@ export class TicketsController {
       .then((maybeEntity) => (maybeEntity ? toJsonApiSingle(maybeEntity) : {}));
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateTicketDto: UpdateTicketDto) {
-  //   return this.ticketsService.update(+id, updateTicketDto);
-  // }
+  @Patch(':id/command/change-column')
+  @ApiOperation({ summary: 'Change le ticket de colonne' })
+  async update(
+    @Param('id') id: string,
+    @Body() updateTicketDto: ChangeColumnTicketDto,
+  ) {
+    const updated = await this.changeColumnTicket.change({
+      columnId: updateTicketDto.columnId,
+      ticketId: id,
+    });
+    return this.errorHandler.unwrapAndHandleErrors(updated);
+  }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Supprimer un ticekt' })

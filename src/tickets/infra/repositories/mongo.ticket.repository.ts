@@ -16,6 +16,12 @@ export class MongoTicketRepository implements TicketRepository {
     private readonly model: Model<TicketDocumentMongoDBO>,
   ) {}
 
+  updateColumnId(id: string, columnId: string): Promise<void> {
+    return this.model
+      .updateOne({ id }, { $set: { 'data.columnId': columnId } })
+      .then(() => undefined);
+  }
+
   fetchHighestPosition(): Promise<number> {
     return this.model
       .findOne({})
