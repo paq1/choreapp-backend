@@ -14,6 +14,10 @@ import {
   CHANGE_COLUMN_TICKET_USE_CASE,
   ChangeColumnTicketUseCaseHandler,
 } from './application/usecases/create/change-column-ticket.usecase';
+import {
+  MOVE_RIGHT_OR_LEFT_USE_CASE,
+  MoveRightOrLeftUseCaseHandler,
+} from './application/usecases/create/move-right-or-left.usecase';
 
 @Module({
   imports: [
@@ -35,6 +39,10 @@ import {
     {
       provide: CHANGE_COLUMN_TICKET_USE_CASE,
       useClass: ChangeColumnTicketUseCaseHandler,
+    },
+    {
+      provide: MOVE_RIGHT_OR_LEFT_USE_CASE,
+      useClass: MoveRightOrLeftUseCaseHandler,
     },
     {
       provide: TICKET_REPOSITORY,

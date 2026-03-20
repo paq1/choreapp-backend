@@ -24,7 +24,12 @@ import {
 } from '../../common/jsonapi/jsonapi.model';
 import type { ChangeColumnTicketUseCase } from '../application/usecases/create/change-column-ticket.usecase';
 import { CHANGE_COLUMN_TICKET_USE_CASE } from '../application/usecases/create/change-column-ticket.usecase';
-import { ChangeColumnTicketDto } from './dto/change-column-ticket.dto';
+import {
+  ChangeColumnTicketDto,
+  MoveTicketDto,
+} from './dto/change-column-ticket.dto';
+import type { MoveRightOrLeftUseCase } from '../application/usecases/create/move-right-or-left.usecase';
+import { MOVE_RIGHT_OR_LEFT_USE_CASE } from '../application/usecases/create/move-right-or-left.usecase';
 
 @Controller('tickets')
 export class TicketsController {
@@ -35,6 +40,8 @@ export class TicketsController {
     private readonly createTicket: CreateTicketUseCase,
     @Inject(CHANGE_COLUMN_TICKET_USE_CASE)
     private readonly changeColumnTicket: ChangeColumnTicketUseCase,
+    @Inject(MOVE_RIGHT_OR_LEFT_USE_CASE)
+    private readonly moveRightOrLeft: MoveRightOrLeftUseCase,
     @Inject(ERROR_HANDLER_SERVICE)
     private readonly errorHandler: ErrorsHandlerService,
   ) {}
@@ -67,12 +74,22 @@ export class TicketsController {
 
   @Patch(':id/command/change-column')
   @ApiOperation({ summary: 'Change le ticket de colonne' })
-  async update(
+  async changeColumn(
     @Param('id') id: string,
     @Body() updateTicketDto: ChangeColumnTicketDto,
   ) {
     const updated = await this.changeColumnTicket.change({
       columnId: updateTicketDto.columnId,
+      ticketId: id,
+    });
+    return this.errorHandler.unwrapAndHandleErrors(updated);
+  }
+
+  @Patch(':id/command/move-left-or-right')
+  @ApiOperation({ summary: 'Bouge le ticket vers la gauche' })
+  async moveLeftOrRight(@Param('id') id: string, @Body() cmd: MoveTicketDto) {
+    const updated = await this.moveRightOrLeft.move({
+      direction: cmd.direction,
       ticketId: id,
     });
     return this.errorHandler.unwrapAndHandleErrors(updated);
