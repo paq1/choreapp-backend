@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Inject,
+  Logger,
   Param,
   Patch,
   Post,
@@ -33,6 +34,8 @@ import { MOVE_RIGHT_OR_LEFT_USE_CASE } from '../application/usecases/create/move
 
 @Controller('tickets')
 export class TicketsController {
+  private readonly logger = new Logger(TicketsController.name);
+
   constructor(
     @Inject(TICKET_REPOSITORY)
     private readonly ticketsRepository: TicketRepository,
@@ -52,6 +55,7 @@ export class TicketsController {
   @ApiResponse({ status: 201, description: 'Ticket créée' })
   @ApiResponse({ status: 400, description: 'Requête invalide' })
   async create(@Body() createTicketDto: CreateTicketDto) {
+    this.logger.log(`demande de creation de ticket [${createTicketDto.title}]`);
     const created = await this.createTicket.create(createTicketDto);
     return this.errorHandler.unwrapAndHandleErrors(created);
   }

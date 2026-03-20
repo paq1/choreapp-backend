@@ -14,7 +14,7 @@ export class TicketEntity {
       return err({
         type: ErrorType.FAILURE,
         status: 400,
-        message: 'Invalid column props',
+        message: 'Invalid ticket props',
       });
     }
     return ok(
@@ -28,7 +28,10 @@ export class TicketEntity {
   }
 
   static isvalid(props: TicketProps): boolean {
-    return props.title.length > 0 && (props.description?.length || 0) > 0;
+    if (props.description) {
+      return props.title.length > 0 && (props.description?.length || 0) > 0;
+    }
+    return props.title.length > 0;
   }
 }
 

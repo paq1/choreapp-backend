@@ -20,7 +20,10 @@ export class ColumnEntity {
   }
 
   static isvalid(props: ColumnProps): boolean {
-    return props.title.length > 0 && (props.description?.length || 0) > 0;
+    if (props.description) {
+      return props.title.length > 0 && props.description.length > 0;
+    }
+    return props.title.length > 0;
   }
 }
 
