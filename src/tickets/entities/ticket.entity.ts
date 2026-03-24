@@ -2,10 +2,13 @@ import { err, ok, Result } from 'neverthrow';
 import { Errors, ErrorType } from '../../common/errors/errors';
 
 export class TicketEntity {
+  static DEFAULT_PRIORITY: number = 1;
+
   private constructor(
     public readonly title: string,
     public readonly order: number,
     public readonly columnId: string,
+    public readonly priority: number,
     public readonly description?: string,
   ) {}
 
@@ -22,6 +25,7 @@ export class TicketEntity {
         props.title,
         props.order,
         props.columnId,
+        props.priority,
         props.description,
       ),
     );
@@ -40,4 +44,5 @@ interface TicketProps {
   order: number;
   columnId: string;
   description?: string;
+  priority: number;
 }

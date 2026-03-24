@@ -13,6 +13,7 @@ export interface TicketDbo {
   title: string;
   order: number;
   description?: string;
+  priority?: number;
 }
 
 export const TICKET_MODEL_NAME = 'Ticket';
@@ -27,6 +28,7 @@ export const TicketMongoSchema = new Schema<TicketDocumentMongoDBO>(
       title: { type: String, required: true },
       order: { type: Number, required: true },
       description: { type: String, required: false },
+      priority: { type: Number, required: false },
     },
     version: { type: Number, required: true, default: 1 },
   },

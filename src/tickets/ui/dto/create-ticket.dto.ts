@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateTicketDto {
@@ -16,4 +16,8 @@ export class CreateTicketDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @ApiProperty({ example: 1, description: '1 = low, 2 = medium, 3 = high' })
+  @IsNumber()
+  priority: number;
 }

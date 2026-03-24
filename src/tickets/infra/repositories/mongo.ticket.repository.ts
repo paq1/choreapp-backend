@@ -39,6 +39,7 @@ export class MongoTicketRepository implements TicketRepository {
         title: dbo.data.title,
         order: dbo.data.order,
         description: dbo.data.description,
+        priority: dbo.data.priority || TicketEntity.DEFAULT_PRIORITY,
       },
       version: dbo.version,
     };
@@ -56,6 +57,7 @@ export class MongoTicketRepository implements TicketRepository {
         title: data.data.title,
         order: data.data.order,
         description: data.data.description,
+        priority: data.data.priority,
       },
       version: 1,
     };
@@ -85,6 +87,7 @@ export class MongoTicketRepository implements TicketRepository {
   fetchAll(): Promise<IEntity<TicketEntity>[]> {
     return this.model
       .find()
+      .sort({ 'data.priority': -1 })
       .limit(100) // TODO : gerer la pagination
       .lean()
       .then((docs) => docs.map((doc) => this.toEntity(doc)));
@@ -112,6 +115,7 @@ export class MongoTicketRepository implements TicketRepository {
               title: data.data.title,
               order: data.data.order,
               description: data.data.description,
+              priority: data.data.priority,
             },
           },
           $inc: { version: 1 },

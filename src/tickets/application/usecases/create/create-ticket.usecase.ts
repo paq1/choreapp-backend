@@ -16,6 +16,7 @@ export interface CreateTicketIn {
   title: string;
   columnId: string;
   description?: string;
+  priority: number;
 }
 export const CREATE_TICKET_USE_CASE = Symbol('CREATE_TICKET_USE_CASE');
 
@@ -57,6 +58,7 @@ export class CreateTicketUseCaseHandler implements CreateTicketUseCase {
   ): ResultAsync<TicketEntity, Errors> {
     const title = ticket.title;
     const description = ticket.description;
+    const priority = ticket.priority;
     const columnId = ticket.columnId;
     const id = randomUUID().valueOf();
 
@@ -67,6 +69,7 @@ export class CreateTicketUseCaseHandler implements CreateTicketUseCase {
           order,
           columnId,
           description,
+          priority,
         });
         return toAsync(entityR);
       })
