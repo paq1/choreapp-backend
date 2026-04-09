@@ -16,6 +16,19 @@ export class MongoColumnRepository implements ColumnRepository {
     private readonly model: Model<ColumnDocumentMongoDBO>,
   ) {}
 
+  fetchAllWithFilter(projectId?: string): Promise<IEntity<ColumnEntity>[]> {
+    const filter = projectId
+      ? { 'data.projectId': projectId }
+      : { 'data.projectId': { $exists: false } };
+
+    return this.model
+      .find(filter)
+      .sort({ 'data.priority': -1 })
+      .limit(100) // TODO : gerer la pagination
+      .lean()
+      .then((docs) => docs.map((doc) => this.toEntity(doc)));
+  }
+
   columnAlreadyExistsFromId(id: string): Promise<boolean> {
     return this.model.exists({ id: id }).then((exists) => !!exists);
   }

@@ -6,9 +6,10 @@ import {
   Inject,
   Param,
   Post,
+  Query,
 } from '@nestjs/common';
 import { CreateColumnDto } from './dto/create-column.dto';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import type { CreateColumnUseCase } from '../application/usecases/create/create-column.usecase';
 import { CREATE_COLUMN_USE_CASE } from '../application/usecases/create/create-column.usecase';
 import type { ErrorsHandlerService } from '../../common/errors/errors.handler';
@@ -47,8 +48,15 @@ export class ColumnsController {
 
   @Get()
   @ApiOperation({ summary: 'Recupere toutes les colonnes' })
-  findAll() {
-    return this.columnRepository.fetchAll().then((x) => toJsonApiMany(x));
+  @ApiQuery({
+    name: 'filter[projectId]',
+    required: false,
+    type: String,
+  })
+  findAll(@Query('filter[projectId]') projectId?: string) {
+    return this.columnRepository
+      .fetchAllWithFilter(projectId)
+      .then((x) => toJsonApiMany(x));
   }
 
   @Get(':id')
