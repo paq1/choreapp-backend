@@ -11,4 +11,9 @@ export class CreateColumnDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @ApiProperty({ example: 'whatever' })
+  @IsOptional()
+  @IsString()
+  projectId?: string;
 }

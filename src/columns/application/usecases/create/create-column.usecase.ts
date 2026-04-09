@@ -12,6 +12,7 @@ import { toAsync } from '../../../../common/netherthrow/helper';
 export interface CreateColumnIn {
   title: string;
   description?: string;
+  projectId?: string;
 }
 export const CREATE_COLUMN_USE_CASE = Symbol('CREATE_COLUMN_USE_CASE');
 
@@ -30,8 +31,10 @@ export class CreateColumnUseCaseHandler implements CreateColumnUseCase {
 
   create(column: CreateColumnIn): ResultAsync<ColumnEntity, Errors> {
     const title = column.title;
+    const projectId = column.projectId;
+
     return ResultAsync.fromSafePromise(
-      this.columnRepository.columnAlreadyExists(title),
+      this.columnRepository.columnAlreadyExists(title, projectId),
     ).andThen((exists) => {
       if (exists) {
         return errAsync<ColumnEntity, Errors>({
@@ -50,6 +53,7 @@ export class CreateColumnUseCaseHandler implements CreateColumnUseCase {
   ): ResultAsync<ColumnEntity, Errors> {
     const title = column.title;
     const description = column.description;
+    const projectId = column.projectId;
     const id = randomUUID().valueOf();
 
     return this.nextPositionComputer
@@ -59,6 +63,7 @@ export class CreateColumnUseCaseHandler implements CreateColumnUseCase {
           title,
           position,
           description,
+          projectId,
         });
         return toAsync(entityR);
       })

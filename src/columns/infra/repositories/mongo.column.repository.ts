@@ -28,8 +28,16 @@ export class MongoColumnRepository implements ColumnRepository {
       .then((doc) => (doc ? this.toEntity(doc).data.position : 0));
   }
 
-  columnAlreadyExists(name: string): Promise<boolean> {
-    return this.model.exists({ 'data.title': name }).then((exists) => !!exists);
+  columnAlreadyExists(name: string, projectId?: string): Promise<boolean> {
+    // TODO : check si OK
+    const andFilter = projectId
+      ? [{ 'data.title': name }, { 'data.projectId': projectId }]
+      : [{ 'data.title': name }];
+    return this.model
+      .exists({
+        $and: andFilter,
+      })
+      .then((exists) => !!exists);
   }
 
   private toEntity(dbo: ColumnDocumentMongoDBO): IEntity<ColumnEntity> {
@@ -40,6 +48,7 @@ export class MongoColumnRepository implements ColumnRepository {
         title: dbo.data.title,
         position: dbo.data.position,
         description: dbo.data.description,
+        projectId: dbo.data.projectId,
       },
       version: dbo.version,
     };
@@ -56,6 +65,7 @@ export class MongoColumnRepository implements ColumnRepository {
         title: data.data.title,
         position: data.data.position,
         description: data.data.description,
+        projectId: data.data.projectId,
       },
       version: 1,
     };

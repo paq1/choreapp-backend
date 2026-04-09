@@ -12,6 +12,7 @@ export interface ColumnDbo {
   title: string;
   position: number;
   description?: string;
+  projectId?: string;
 }
 
 export const COLUMN_MODEL_NAME = 'Column';
@@ -25,6 +26,7 @@ export const ColumnMongoSchema = new Schema<ColumnDocumentMongoDBO>(
       title: { type: String, required: true },
       position: { type: Number, required: true },
       description: { type: String, required: false },
+      projectId: { type: String, required: false },
     },
     version: { type: Number, required: true, default: 1 },
   },
