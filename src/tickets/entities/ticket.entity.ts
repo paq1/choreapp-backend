@@ -10,6 +10,7 @@ export class TicketEntity {
     public readonly columnId: string,
     public readonly priority: number,
     public readonly description?: string,
+    public readonly projectId?: string,
   ) {}
 
   static safeCreate(props: TicketProps): Result<TicketEntity, Errors> {
@@ -27,6 +28,7 @@ export class TicketEntity {
         props.columnId,
         props.priority,
         props.description,
+        props.projectId,
       ),
     );
   }
@@ -45,4 +47,5 @@ interface TicketProps {
   columnId: string;
   description?: string;
   priority: number;
+  projectId?: string;
 }

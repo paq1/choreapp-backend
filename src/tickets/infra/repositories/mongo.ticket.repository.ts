@@ -16,6 +16,19 @@ export class MongoTicketRepository implements TicketRepository {
     private readonly model: Model<TicketDocumentMongoDBO>,
   ) {}
 
+  fetchAllWithFilter(projectId?: string): Promise<IEntity<TicketEntity>[]> {
+    const filter = projectId
+      ? { 'data.projectId': projectId }
+      : { 'data.projectId': { $exists: false } };
+
+    return this.model
+      .find(filter)
+      .sort({ 'data.priority': -1 })
+      .limit(100) // TODO : gerer la pagination
+      .lean()
+      .then((docs) => docs.map((doc) => this.toEntity(doc)));
+  }
+
   updateColumnId(id: string, columnId: string): Promise<void> {
     return this.model
       .updateOne({ id }, { $set: { 'data.columnId': columnId } })
@@ -39,6 +52,7 @@ export class MongoTicketRepository implements TicketRepository {
         title: dbo.data.title,
         order: dbo.data.order,
         description: dbo.data.description,
+        projectId: dbo.data.projectId,
         priority: dbo.data.priority || TicketEntity.DEFAULT_PRIORITY,
       },
       version: dbo.version,
@@ -57,6 +71,7 @@ export class MongoTicketRepository implements TicketRepository {
         title: data.data.title,
         order: data.data.order,
         description: data.data.description,
+        projectId: data.data.projectId,
         priority: data.data.priority,
       },
       version: 1,
@@ -115,6 +130,7 @@ export class MongoTicketRepository implements TicketRepository {
               title: data.data.title,
               order: data.data.order,
               description: data.data.description,
+              projectId: data.data.projectId,
               priority: data.data.priority,
             },
           },

@@ -8,6 +8,7 @@ export interface TicketRepository extends Repository<
 > {
   fetchHighestPosition(): Promise<number>;
   updateColumnId(id: string, columnId: string): Promise<void>;
+  fetchAllWithFilter(projectId?: string): Promise<IEntity<TicketEntity>[]>;
 }
 
 export const TICKET_REPOSITORY = Symbol('TICKET_REPOSITORY');

@@ -8,13 +8,14 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import type { TicketRepository } from '../application/repositories/ticket.repository';
 import { TICKET_REPOSITORY } from '../application/repositories/ticket.repository';
 import type { CreateTicketUseCase } from '../application/usecases/create/create-ticket.usecase';
 import { CREATE_TICKET_USE_CASE } from '../application/usecases/create/create-ticket.usecase';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import {
   ERROR_HANDLER_SERVICE,
   type ErrorsHandlerService,
@@ -62,9 +63,14 @@ export class TicketsController {
 
   @Get()
   @ApiOperation({ summary: 'Recupere tout les ticket' })
-  findAll() {
+  @ApiQuery({
+    name: 'filter[projectId]',
+    required: false,
+    type: String,
+  })
+  findAll(@Query('filter[projectId]') projectId?: string) {
     return this.ticketsRepository
-      .fetchAll()
+      .fetchAllWithFilter(projectId)
       .then((entity) => toJsonApiMany(entity));
   }
 

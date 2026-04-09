@@ -17,6 +17,11 @@ export class CreateTicketDto {
   @IsString()
   description?: string;
 
+  @ApiProperty({ example: 'whatever' })
+  @IsOptional()
+  @IsString()
+  projectId?: string;
+
   @ApiProperty({ example: 1, description: '1 = low, 2 = medium, 3 = high' })
   @IsNumber()
   priority: number;
