@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ColumnsModule } from './columns/columns.module';
 import { TicketsModule } from './tickets/tickets.module';
+import { ProjectsModule } from './projects/projects.module';
 import databaseConfig from './config/database.config';
 
 @Module({
@@ -21,6 +22,7 @@ import databaseConfig from './config/database.config';
     }),
     ColumnsModule,
     TicketsModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

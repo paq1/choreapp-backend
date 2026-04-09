@@ -6,6 +6,7 @@ export class ColumnEntity {
     public readonly title: string,
     public readonly position: number,
     public readonly description?: string,
+    public readonly projectId?: string,
   ) {}
 
   static safeCreate(props: ColumnProps): Result<ColumnEntity, Errors> {
@@ -16,7 +17,14 @@ export class ColumnEntity {
         message: 'Invalid column props',
       });
     }
-    return ok(new ColumnEntity(props.title, props.position, props.description));
+    return ok(
+      new ColumnEntity(
+        props.title,
+        props.position,
+        props.description,
+        props.projectId,
+      ),
+    );
   }
 
   static isvalid(props: ColumnProps): boolean {
@@ -31,4 +39,5 @@ interface ColumnProps {
   title: string;
   position: number;
   description?: string;
+  projectId?: string;
 }
